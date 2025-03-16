@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xuecheng.base.exception.CustomException;
 import com.xuecheng.base.model.PageParam;
 import com.xuecheng.content.mapper.CourseBaseMapper;
 import com.xuecheng.content.model.dto.AddCourseDto;
@@ -19,6 +20,7 @@ import com.xuecheng.content.service.CourseMarketService;
 import com.xuecheng.system.constant.SystemConstant;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseBase> implements CourseBaseService {
@@ -60,68 +62,100 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
         return courseBasePage;
     }
 
+    /**
+     * 保存课程信息
+     *
+     * @param addCourseDto 用于添加课程的数据传输对象
+     * @return 返回保存后的课程基本信息DTO
+     * @throws CustomException 如果课程信息不完整或不合规，则抛出自定义异常
+     */
     @Override
+    @Transactional
     public CourseBaseDto saveInfo(AddCourseDto addCourseDto) {
+        // 默认公司ID，用于关联课程与公司
         Long companyId = 1L;
 
+        // 校验课程名称是否为空
         if (StrUtil.isBlank(addCourseDto.getName())) {
-            throw new RuntimeException("课程名称为空");
+            throw new CustomException("课程名称为空");
         }
 
+        // 校验课程主分类是否为空
         if (StrUtil.isBlank(addCourseDto.getMt())) {
-            throw new RuntimeException("课程分类为空");
+            throw new CustomException("课程分类为空");
         }
 
+        // 校验课程子分类是否为空
         if (StrUtil.isBlank(addCourseDto.getSt())) {
-            throw new RuntimeException("课程分类为空");
+            throw new CustomException("课程分类为空");
         }
 
+        // 校验课程等级是否为空
         if (StrUtil.isBlank(addCourseDto.getGrade())) {
-            throw new RuntimeException("课程等级为空");
+            throw new CustomException("课程等级为空");
         }
 
+        // 校验教育模式是否为空
         if (StrUtil.isBlank(addCourseDto.getTeachMode())) {
-            throw new RuntimeException("教育模式为空");
+            throw new CustomException("教育模式为空");
         }
 
+        // 校验适应人群是否为空
         if (StrUtil.isBlank(addCourseDto.getUsers())) {
-            throw new RuntimeException("适应人群为空");
+            throw new CustomException("适应人群为空");
         }
 
+        // 校验收费规则是否为空
         if (StrUtil.isBlank(addCourseDto.getCharge())) {
-            throw new RuntimeException("收费规则为空");
+            throw new CustomException("收费规则为空");
         }
 
+        // 将添加课程的DTO转换为课程基础实体对象
         CourseBase courseBase = BeanUtil.copyProperties(addCourseDto, CourseBase.class);
+        // 设置课程所属公司ID
         courseBase.setCompanyId(companyId);
+        // 设置课程审核状态为未审核
         courseBase.setAuditStatus(SystemConstant.COURSE_AUDIT_NO);
+        // 设置课程发布状态为未发布
         courseBase.setStatus(SystemConstant.COURSE_PUBLISH_NO);
 
+        // 保存课程基础信息
         save(courseBase);
 
+        // 将添加课程的DTO转换为课程市场实体对象
         CourseMarket courseMarket = BeanUtil.copyProperties(addCourseDto, CourseMarket.class);
+        // 设置课程市场信息的ID为课程基础信息的ID
         courseMarket.setId(courseBase.getId());
 
+        // 再次校验收费规则是否为空
         String charge = courseMarket.getCharge();
         if (StrUtil.isBlank(charge)) {
-            throw new RuntimeException("收费规则没有选择");
+            throw new CustomException("收费规则没有选择");
         }
 
+        // 如果课程为收费，校验课程价格是否合规
         if (charge.equals(SystemConstant.COURSE_CHARGE)) {
             if (courseMarket.getPrice() == null || courseMarket.getPrice() <= 0) {
-                throw new RuntimeException("课程为收费价格不能为空且必须大于0");
+                throw new CustomException("课程为收费价格不能为空且必须大于0");
             }
         }
 
+        // 保存课程市场信息
         courseMarketService.save(courseMarket);
 
+        // 将课程市场信息转换为课程基础DTO
         CourseBaseDto courseBaseDto = BeanUtil.copyProperties(courseMarket, CourseBaseDto.class);
 
+        // 根据课程主分类ID获取课程主分类信息
         CourseCategory mtCourseCategory = courseCategoryService.getById(courseBase.getMt());
+        // 根据课程子分类ID获取课程子分类信息
         CourseCategory stCourseCategory = courseCategoryService.getById(courseBase.getSt());
+        // 设置课程基础DTO的主分类名称
         courseBaseDto.setMtName(mtCourseCategory.getName());
+        // 设置课程基础DTO的子分类名称
         courseBaseDto.setStName(stCourseCategory.getName());
 
+        // 返回保存后的课程基础信息DTO
         return courseBaseDto;
     }
 }

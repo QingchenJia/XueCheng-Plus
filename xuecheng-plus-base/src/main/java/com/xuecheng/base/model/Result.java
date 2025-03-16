@@ -1,5 +1,6 @@
 package com.xuecheng.base.model;
 
+import com.xuecheng.base.exception.Error;
 import lombok.Data;
 
 @Data
@@ -26,5 +27,9 @@ public class Result<T> {
 
     public static <T> Result<T> fail(String message) {
         return new Result<>(0, message, null);
+    }
+
+    public static <T> Result<T> fail(Error error) {
+        return new Result<>(0, error.getMessage(), null);
     }
 }
