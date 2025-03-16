@@ -1,13 +1,10 @@
 package com.xuecheng.content;
 
-import com.xuecheng.base.config.MybatisPlusConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Import;
 
-@SpringBootApplication
-@Import(MybatisPlusConfig.class)
+@SpringBootApplication(scanBasePackages = {"com.xuecheng.content", "com.xuecheng.base"})
 @Slf4j
 public class ContentApplication {
     public static void main(String[] args) {
