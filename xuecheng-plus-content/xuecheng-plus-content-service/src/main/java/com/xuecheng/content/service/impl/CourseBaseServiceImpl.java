@@ -143,19 +143,40 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
         // 保存课程市场信息
         courseMarketService.save(courseMarket);
 
-        // 将课程市场信息转换为课程基础DTO
-        CourseBaseDto courseBaseDto = BeanUtil.copyProperties(courseMarket, CourseBaseDto.class);
+        // 返回保存后的课程基础信息DTO
+        return getCourseInfoById(courseBase.getId());
+    }
 
-        // 根据课程主分类ID获取课程主分类信息
+    /**
+     * 根据课程ID获取课程信息
+     * 此方法通过聚合课程基本信息和市场信息，以及课程的一级和二级分类信息，来构建一个课程数据传输对象
+     *
+     * @param courseId 课程ID，用于查询课程信息
+     * @return CourseBaseDto 包含课程基本信息、市场信息及分类信息的课程数据传输对象
+     */
+    @Override
+    public CourseBaseDto getCourseInfoById(Long courseId) {
+        // 获取课程基本信息
+        CourseBase courseBase = getById(courseId);
+        // 获取课程市场信息
+        CourseMarket courseMarket = courseMarketService.getById(courseId);
+
+        // 将课程基本信息复制到课程数据传输对象中
+        CourseBaseDto courseBaseDto = BeanUtil.copyProperties(courseBase, CourseBaseDto.class);
+        // 将课程市场信息复制到课程数据传输对象中
+        BeanUtil.copyProperties(courseMarket, courseBaseDto);
+
+        // 获取课程的一级分类信息
         CourseCategory mtCourseCategory = courseCategoryService.getById(courseBase.getMt());
-        // 根据课程子分类ID获取课程子分类信息
+        // 获取课程的二级分类信息
         CourseCategory stCourseCategory = courseCategoryService.getById(courseBase.getSt());
-        // 设置课程基础DTO的主分类名称
+
+        // 设置课程数据传输对象的一级分类名称
         courseBaseDto.setMtName(mtCourseCategory.getName());
-        // 设置课程基础DTO的子分类名称
+        // 设置课程数据传输对象的二级分类名称
         courseBaseDto.setStName(stCourseCategory.getName());
 
-        // 返回保存后的课程基础信息DTO
+        // 返回包含完整课程信息的课程数据传输对象
         return courseBaseDto;
     }
 }

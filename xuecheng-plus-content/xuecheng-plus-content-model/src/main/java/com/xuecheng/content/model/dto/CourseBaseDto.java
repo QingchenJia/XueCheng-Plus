@@ -1,9 +1,12 @@
 package com.xuecheng.content.model.dto;
 
+import com.xuecheng.content.model.po.CourseBase;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class CourseBaseDto {
+public class CourseBaseDto extends CourseBase {
     private String charge;
 
     private Float price;

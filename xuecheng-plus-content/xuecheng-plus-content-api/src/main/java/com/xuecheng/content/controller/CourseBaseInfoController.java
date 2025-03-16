@@ -11,10 +11,7 @@ import com.xuecheng.content.service.CourseBaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "课程信息管理接口")
 @RestController
@@ -34,6 +31,13 @@ public class CourseBaseInfoController {
     @PostMapping("/course")
     public Result<CourseBaseDto> createCourseBase(@RequestBody AddCourseDto addCourseDto) {
         CourseBaseDto courseBaseDto = courseBaseService.saveInfo(addCourseDto);
+        return Result.success(courseBaseDto);
+    }
+
+    @Operation(summary = "根据课程id查询课程基础信息")
+    @GetMapping("/course/{courseId}")
+    public Result<CourseBaseDto> getCourseBaseById(@PathVariable Long courseId) {
+        CourseBaseDto courseBaseDto = courseBaseService.getCourseInfoById(courseId);
         return Result.success(courseBaseDto);
     }
 }

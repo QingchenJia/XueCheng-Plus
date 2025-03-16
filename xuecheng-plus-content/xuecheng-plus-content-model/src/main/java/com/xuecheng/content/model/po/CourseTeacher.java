@@ -1,6 +1,7 @@
 package com.xuecheng.content.model.po;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serial;
@@ -27,5 +28,6 @@ public class CourseTeacher implements Serializable {
     private String photograph;
 
     @TableField(fill = FieldFill.INSERT)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createDate;
 }
