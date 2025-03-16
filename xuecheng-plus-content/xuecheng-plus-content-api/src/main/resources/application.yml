@@ -4,7 +4,7 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.19.130:3306/xuecheng_plus_content?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://192.168.19.130:3306/xuecheng_plus_content?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
     password: jqc004118
     hikari:
@@ -31,7 +31,7 @@ springdoc:
   api-docs:
     path: /v3/api-docs
   group-configs:
-    - group: '课程查询接口'
+    - group: '内容管理接口'
       paths-to-match: '/content/**'
       packages-to-scan: 'com.xuecheng.content.controller'
   default-flat-param-object: true

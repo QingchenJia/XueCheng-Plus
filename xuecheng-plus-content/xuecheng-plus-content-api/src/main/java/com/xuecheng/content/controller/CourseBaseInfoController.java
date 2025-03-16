@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "课程信息管理接口", description = "课程信息管理接口")
+@Tag(name = "课程信息管理接口")
 @RestController
 @RequestMapping("/content")
 public class CourseBaseInfoController {

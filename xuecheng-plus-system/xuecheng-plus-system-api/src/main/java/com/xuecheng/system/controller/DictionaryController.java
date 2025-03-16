@@ -14,21 +14,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "字典管理接口", description = "字典管理接口")
+@Tag(name = "字典管理接口")
 @RestController
 @RequestMapping("/system")
 public class DictionaryController {
     @Resource
     private DictionaryService dictionaryService;
 
-    @Operation(description = "查询所有字典")
+    @Operation(summary = "查询所有字典")
     @GetMapping("/dictionary/all")
     public Result<List<Dictionary>> queryAll() {
         List<Dictionary> dictionaries = dictionaryService.list();
         return Result.success(dictionaries);
     }
 
-    @Operation(description = "根据字典code查询字典")
+    @Operation(summary = "根据字典code查询字典")
     @GetMapping("/dictionary/code/{code}")
     public Result<Dictionary> getByCode(@PathVariable String code) {
         LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<>();
