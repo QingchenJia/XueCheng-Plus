@@ -1,7 +1,7 @@
 package com.xuecheng.content.controller;
 
+import cn.hutool.core.lang.tree.Tree;
 import com.xuecheng.base.model.Result;
-import com.xuecheng.content.model.dto.CourseCategoryDto;
 import com.xuecheng.content.service.CourseCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,8 +21,8 @@ public class CourseCategoryController {
 
     @Operation(summary = "查询课程分类树形结构")
     @GetMapping("/category/tree")
-    public Result<List<CourseCategoryDto>> queryTreeNodes() {
-        List<CourseCategoryDto> courseCategoryDtos = courseCategoryService.queryTreeNodes();
-        return Result.success(courseCategoryDtos);
+    public Result<List<Tree<String>>> queryTreeNodes() {
+        List<Tree<String>> courseCategoryTree = courseCategoryService.queryTreeNodes();
+        return Result.success(courseCategoryTree);
     }
 }
