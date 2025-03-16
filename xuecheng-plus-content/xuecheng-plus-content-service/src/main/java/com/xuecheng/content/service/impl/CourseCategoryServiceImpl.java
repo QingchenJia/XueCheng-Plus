@@ -18,7 +18,7 @@ import java.util.List;
 public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper, CourseCategory> implements CourseCategoryService {
     /**
      * 查询课程类别树节点
-     *
+     * <p>
      * 本方法用于构建课程类别的树形结构，首先获取所有课程类别，然后将其转换为DTO列表，
      * 并移除第一个类别（可能是因为第一个类别不符合展示要求或有特殊用途），
      * 最后调用buildTree方法构建树形结构
@@ -46,7 +46,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
     /**
      * 在课程类别列表中查找指定类别的子类别
      *
-     * @param courseCategoryDto 指定的课程类别DTO，用于查找其子类别
+     * @param courseCategoryDto  指定的课程类别DTO，用于查找其子类别
      * @param courseCategoryDtos 包含所有课程类别的列表，从中查找子类别
      * @return 返回一个列表，包含所有找到的子类别如果指定类别没有子类别，则返回空列表
      */
@@ -64,7 +64,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
     /**
      * 构建课程类别树结构
      *
-     * @param tree 用于构建树结构的初始列表，如果为空，则从根节点开始构建
+     * @param tree               用于构建树结构的初始列表，如果为空，则从根节点开始构建
      * @param courseCategoryDtos 包含所有课程类别的列表，用于构建树结构
      * @return 返回构建完成的课程类别树结构列表
      */

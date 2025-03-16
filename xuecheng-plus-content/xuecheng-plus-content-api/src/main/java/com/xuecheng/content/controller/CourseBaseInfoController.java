@@ -3,6 +3,8 @@ package com.xuecheng.content.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xuecheng.base.model.PageParam;
 import com.xuecheng.base.model.Result;
+import com.xuecheng.content.model.dto.AddCourseDto;
+import com.xuecheng.content.model.dto.CourseBaseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.service.CourseBaseService;
@@ -26,5 +28,12 @@ public class CourseBaseInfoController {
     public Result<Page<CourseBase>> list(PageParam pageParam, @RequestBody(required = false) QueryCourseParamsDto queryCourseParamsDto) {
         Page<CourseBase> courseBasePage = courseBaseService.listPage(pageParam, queryCourseParamsDto);
         return Result.success(courseBasePage);
+    }
+
+    @Operation(summary = "新增课程基础信息")
+    @PostMapping("/course")
+    public Result<CourseBaseDto> createCourseBase(@RequestBody AddCourseDto addCourseDto) {
+        CourseBaseDto courseBaseDto = courseBaseService.saveInfo(addCourseDto);
+        return Result.success(courseBaseDto);
     }
 }
