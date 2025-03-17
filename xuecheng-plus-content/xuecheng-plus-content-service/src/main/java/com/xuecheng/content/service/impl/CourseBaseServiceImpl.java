@@ -10,6 +10,7 @@ import com.xuecheng.base.model.PageParam;
 import com.xuecheng.content.mapper.CourseBaseMapper;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseDto;
+import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.model.po.CourseCategory;
@@ -178,5 +179,87 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
 
         // 返回包含完整课程信息的课程数据传输对象
         return courseBaseDto;
+    }
+
+    /**
+     * 更新课程信息
+     * <p>
+     * 此方法主要用于更新课程的基本信息和市场信息它首先验证了课程名称、分类、等级、教育模式、适应人群和收费规则等字段是否填写
+     * 然后将编辑课程的DTO对象转换为CourseBase对象，并设置课程的审核状态和发布状态之后，更新课程基本信息
+     * 接着，将DTO对象转换为CourseMarket对象，再次验证收费规则，并根据收费规则检查课程价格最后，更新课程市场信息
+     *
+     * @param editCourseDto 包含要编辑课程信息的数据传输对象
+     * @return 返回更新后的课程基本信息DTO对象
+     * @throws CustomException 如果课程信息填写不完整或价格不符合要求，抛出自定义异常
+     */
+    @Override
+    public CourseBaseDto updateInfo(EditCourseDto editCourseDto) {
+        // 检查课程名称是否为空
+        if (StrUtil.isBlank(editCourseDto.getName())) {
+            throw new CustomException("课程名称为空");
+        }
+
+        // 检查课程主分类是否为空
+        if (StrUtil.isBlank(editCourseDto.getMt())) {
+            throw new CustomException("课程分类为空");
+        }
+
+        // 检查课程子分类是否为空
+        if (StrUtil.isBlank(editCourseDto.getSt())) {
+            throw new CustomException("课程分类为空");
+        }
+
+        // 检查课程等级是否为空
+        if (StrUtil.isBlank(editCourseDto.getGrade())) {
+            throw new CustomException("课程等级为空");
+        }
+
+        // 检查教育模式是否为空
+        if (StrUtil.isBlank(editCourseDto.getTeachMode())) {
+            throw new CustomException("教育模式为空");
+        }
+
+        // 检查适应人群是否为空
+        if (StrUtil.isBlank(editCourseDto.getUsers())) {
+            throw new CustomException("适应人群为空");
+        }
+
+        // 检查收费规则是否为空
+        if (StrUtil.isBlank(editCourseDto.getCharge())) {
+            throw new CustomException("收费规则为空");
+        }
+
+        // 将EditCourseDto对象转换为CourseBase对象
+        CourseBase courseBase = BeanUtil.copyProperties(editCourseDto, CourseBase.class);
+
+        // 设置课程的审核状态为未审核
+        courseBase.setAuditStatus(SystemConstant.COURSE_AUDIT_NO);
+        // 设置课程的发布状态为未发布
+        courseBase.setStatus(SystemConstant.COURSE_PUBLISH_NO);
+
+        // 更新课程基本信息
+        updateById(courseBase);
+
+        // 将EditCourseDto对象转换为CourseMarket对象
+        CourseMarket courseMarket = BeanUtil.copyProperties(editCourseDto, CourseMarket.class);
+
+        // 再次检查收费规则是否为空
+        String charge = courseMarket.getCharge();
+        if (StrUtil.isBlank(charge)) {
+            throw new CustomException("收费规则没有选择");
+        }
+
+        // 如果课程为收费，检查价格是否有效
+        if (charge.equals(SystemConstant.COURSE_CHARGE)) {
+            if (courseMarket.getPrice() == null || courseMarket.getPrice() <= 0) {
+                throw new CustomException("课程为收费价格不能为空且必须大于0");
+            }
+        }
+
+        // 更新课程市场信息
+        courseMarketService.updateById(courseMarket);
+
+        // 根据课程ID返回更新后的课程信息
+        return getCourseInfoById(editCourseDto.getId());
     }
 }
