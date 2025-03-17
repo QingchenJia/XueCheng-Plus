@@ -16,6 +16,7 @@ import com.xuecheng.content.service.TeachPlanMediaService;
 import com.xuecheng.content.service.TeachPlanService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -155,5 +156,83 @@ public class TeachPlanServiceImpl extends ServiceImpl<TeachPlanMapper, TeachPlan
 
         // 删除与课程计划ID关联的媒体信息
         teachPlanMediaService.remove(teachPlanMediaQueryWrapper);
+    }
+
+    /**
+     * 上移指定教学计划的顺序
+     * 如果当前教学计划已经在最顶部，则抛出异常
+     * 否则，找到前一个教学计划并与其交换顺序
+     *
+     * @param id 教学计划的ID
+     * @throws CustomException 如果当前教学计划已经在最顶部时
+     */
+    @Override
+    @Transactional
+    public void moveUp(Long id) {
+        // 根据ID获取教学计划
+        TeachPlan teachPlan = getById(id);
+        int orderBy = teachPlan.getOrderBy();
+
+        // 如果当前教学计划已经在最顶部，抛出异常
+        if (orderBy == 1) {
+            throw new CustomException("当前章节在开头，无法上移");
+        }
+
+        // 创建查询条件，寻找同一父级且顺序值为当前顺序值减一的教学计划
+        LambdaQueryWrapper<TeachPlan> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(TeachPlan::getParentId, teachPlan.getParentId())
+                .eq(TeachPlan::getOrderBy, --orderBy);
+
+        // 获取前一个教学计划
+        TeachPlan onTeachPlan = getOne(queryWrapper);
+        // 将前一个教学计划的顺序值增加1，即向下移动
+        onTeachPlan.setOrderBy(onTeachPlan.getOrderBy() + 1);
+        updateById(onTeachPlan);
+
+        // 将当前教学计划的顺序值减一，即向上移动
+        teachPlan.setOrderBy(orderBy);
+        updateById(teachPlan);
+    }
+
+    /**
+     * 下移指定教学计划的顺序
+     * 如果当前教学计划已经在其父级中的最后位置，则抛出异常
+     * 否则，与下一个教学计划交换顺序，以实现下移效果
+     *
+     * @param id 要下移的教学计划的ID
+     * @throws CustomException 如果当前教学计划已经在末尾，无法下移
+     */
+    @Override
+    @Transactional
+    public void moveDown(Long id) {
+        // 获取当前教学计划
+        TeachPlan teachPlan = getById(id);
+        int orderBy = teachPlan.getOrderBy();
+
+        // 创建查询条件，查找与当前教学计划同一父级的所有记录
+        LambdaQueryWrapper<TeachPlan> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(TeachPlan::getParentId, teachPlan.getParentId());
+        // 计算同一父级下的教学计划总数
+        int count = (int) count(queryWrapper);
+
+        // 如果当前教学计划的顺序号等于总数，说明已经在末尾，无法下移
+        if (orderBy == count) {
+            throw new CustomException("当前章节在末尾，无法下移");
+        }
+
+        // 创建查询条件，查找下一个教学计划
+        LambdaQueryWrapper<TeachPlan> teachPlanQueryWrapper = new LambdaQueryWrapper<>();
+        teachPlanQueryWrapper.eq(TeachPlan::getParentId, teachPlan.getParentId())
+                .eq(TeachPlan::getOrderBy, ++orderBy);
+        // 获取下一个教学计划
+        TeachPlan downTeachPlan = getOne(teachPlanQueryWrapper);
+
+        // 交换下一个教学计划的顺序号，使其顺序号减1
+        downTeachPlan.setOrderBy(downTeachPlan.getOrderBy() - 1);
+        updateById(downTeachPlan);
+
+        // 更新当前教学计划的顺序号，使其顺序号加1
+        teachPlan.setOrderBy(orderBy);
+        updateById(teachPlan);
     }
 }

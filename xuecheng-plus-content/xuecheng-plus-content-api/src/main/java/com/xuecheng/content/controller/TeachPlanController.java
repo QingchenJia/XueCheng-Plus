@@ -38,4 +38,18 @@ public class TeachPlanController {
         teachPlanService.deleteInfo(id);
         return Result.success();
     }
+
+    @Operation(summary = "课程计划上移")
+    @PostMapping("/teachPlan/moveUp/{id}")
+    public Result<?> moveUp(@PathVariable Long id) {
+        teachPlanService.moveUp(id);
+        return Result.success();
+    }
+
+    @Operation(summary = "课程计划下移")
+    @PostMapping("/teachPlan/moveDown/{id}")
+    public Result<?> moveDown(@PathVariable Long id) {
+        teachPlanService.moveDown(id);
+        return Result.success();
+    }
 }
