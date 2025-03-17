@@ -2,14 +2,12 @@ package com.xuecheng.content.controller;
 
 import cn.hutool.core.lang.tree.Tree;
 import com.xuecheng.base.model.Result;
+import com.xuecheng.content.model.dto.SaveOrUpdateTeachPlanDto;
 import com.xuecheng.content.service.TeachPlanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,5 +23,19 @@ public class TeachPlanController {
     public Result<List<Tree<String>>> getTreeNodes(@PathVariable Long courseId) {
         List<Tree<String>> coursePlanTree = teachPlanService.getPlanTree(courseId);
         return Result.success(coursePlanTree);
+    }
+
+    @Operation(summary = "课程计划创建或修改")
+    @PostMapping("/teachPlan")
+    public Result<?> saveOrUpdateTeachPlan(@RequestBody SaveOrUpdateTeachPlanDto saveOrUpdateTeachPlanDto) {
+        teachPlanService.saveOrUpdateInfo(saveOrUpdateTeachPlanDto);
+        return Result.success();
+    }
+
+    @Operation(summary = "课程计划删除")
+    @DeleteMapping("/teachPlan/{id}")
+    public Result<?> deletePlan(@PathVariable Long id) {
+        teachPlanService.deleteInfo(id);
+        return Result.success();
     }
 }
