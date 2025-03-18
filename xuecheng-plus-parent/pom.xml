@@ -26,6 +26,7 @@
         <module>../xuecheng-plus-content</module>
         <module>../xuecheng-plus-system</module>
         <module>../xuecheng-plus-gateway</module>
+        <module>../xuecheng-plus-media</module>
     </modules>
     <scm>
         <connection/>

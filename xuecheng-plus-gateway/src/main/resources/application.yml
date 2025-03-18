@@ -16,3 +16,7 @@ spring:
           uri: lb://content-api
           predicates:
             - Path=/content/**
+        - id: media-api
+          uri: lb://media-api
+          predicates:
+            - Path=/media/**

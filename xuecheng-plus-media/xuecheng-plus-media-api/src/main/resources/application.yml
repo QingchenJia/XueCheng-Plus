@@ -1,0 +1,43 @@
+server:
+  port: 63060
+spring:
+  application:
+    name: media-api
+  cloud:
+    nacos:
+      server-addr: 192.168.19.130:8848
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.19.130:3306/xuecheng_plus_media?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: jqc004118
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 60000
+      max-lifetime: 1800000
+      maximum-pool-size: 5
+      minimum-idle: 5
+      pool-name: hikari-xuecheng-plus
+      auto-commit: true
+      connection-test-query: SELECT 1
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: '媒体资源接口'
+      paths-to-match: '/media/**'
+      packages-to-scan: 'com.xuecheng.media.controller'
+  default-flat-param-object: true
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
