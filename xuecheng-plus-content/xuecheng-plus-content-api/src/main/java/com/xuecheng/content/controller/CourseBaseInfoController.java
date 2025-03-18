@@ -48,4 +48,11 @@ public class CourseBaseInfoController {
         CourseBaseDto courseBaseDto = courseBaseService.updateInfo(editCourseDto);
         return Result.success(courseBaseDto);
     }
+
+    @Operation(summary = "删除课程基础信息")
+    @DeleteMapping("/course/{id}")
+    public Result<?> deleteCourseBase(@PathVariable Long id) {
+        courseBaseService.deleteInfo(id);
+        return Result.success();
+    }
 }

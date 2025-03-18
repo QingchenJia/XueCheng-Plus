@@ -262,4 +262,28 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
         // 根据课程ID返回更新后的课程信息
         return getCourseInfoById(editCourseDto.getId());
     }
+
+    /**
+     * 根据ID删除课程信息
+     * 此方法首先检查课程的审核状态，如果课程已提交审核，则不允许删除
+     * 如果课程未提交审核，则同时删除课程基础信息和市场信息
+     *
+     * @param id 课程ID，用于定位要删除的课程信息
+     * @throws CustomException 如果课程已提交受审，抛出自定义异常阻止删除操作
+     */
+    @Override
+    public void deleteInfo(Long id) {
+        // 根据ID获取课程基础信息
+        CourseBase courseBase = getById(id);
+        // 检查课程的审核状态，如果课程已提交审核，则不允许删除
+        if (!courseBase.getAuditStatus().equals(SystemConstant.COURSE_AUDIT_NO)) {
+            throw new CustomException("课程已提交受审，不能删除");
+        }
+
+        // 删除课程基础信息
+        removeById(id);
+
+        // 删除与课程关联的市场信息
+        courseMarketService.removeById(id);
+    }
 }

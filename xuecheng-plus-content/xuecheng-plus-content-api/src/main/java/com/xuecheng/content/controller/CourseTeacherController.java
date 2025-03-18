@@ -35,4 +35,18 @@ public class CourseTeacherController {
         CourseTeacher courseTeacher = courseTeacherService.saveInfo(addCourseTeacherDto);
         return Result.success(courseTeacher);
     }
+
+    @Operation(summary = "更新授课老师信息")
+    @PutMapping("/courseTeacher")
+    public Result<CourseTeacher> updateTeacher(@RequestBody CourseTeacher courseTeacher) {
+        CourseTeacher newCourseTeacher = courseTeacherService.updateInfo(courseTeacher);
+        return Result.success(newCourseTeacher);
+    }
+
+    @Operation(summary = "删除授课老师信息")
+    @DeleteMapping("/courseTeacher/course/{courseId}/{id}")
+    public Result<?> deleteTeacher(@PathVariable Long courseId, @PathVariable Long id) {
+        courseTeacherService.deleteInfo(courseId, id);
+        return Result.success();
+    }
 }

@@ -6,4 +6,8 @@ import com.xuecheng.content.model.po.CourseTeacher;
 
 public interface CourseTeacherService extends IService<CourseTeacher> {
     CourseTeacher saveInfo(AddCourseTeacherDto addCourseTeacherDto);
+
+    CourseTeacher updateInfo(CourseTeacher courseTeacher);
+
+    void deleteInfo(Long courseId, Long id);
 }
