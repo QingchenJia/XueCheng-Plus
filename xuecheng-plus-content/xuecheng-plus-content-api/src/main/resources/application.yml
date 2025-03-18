@@ -1,6 +1,11 @@
 server:
   port: 63040
 spring:
+  application:
+    name: content-api
+  cloud:
+    nacos:
+      server-addr: 192.168.19.130:8848
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver

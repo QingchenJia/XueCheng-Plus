@@ -1,0 +1,18 @@
+server:
+  port: 63000
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      server-addr: 192.168.19.130:8848
+    gateway:
+      routes:
+        - id: system-api
+          uri: lb://system-api
+          predicates:
+            - Path=/system/**
+        - id: content-api
+          uri: lb://content-api
+          predicates:
+            - Path=/content/**
