@@ -57,7 +57,9 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         // 创建查询封装对象，用于后续的条件查询
         LambdaQueryWrapper<MediaFiles> queryWrapper = new LambdaQueryWrapper<>();
         // 根据查询条件构建查询封装对象
-        queryWrapper.like(StrUtil.isNotBlank(fileType), MediaFiles::getFileType, fileType).like(StrUtil.isNotBlank(filename), MediaFiles::getFilename, filename).eq(StrUtil.isNotBlank(auditStatus), MediaFiles::getAuditStatus, auditStatus);
+        queryWrapper.like(StrUtil.isNotBlank(fileType), MediaFiles::getFileType, fileType)
+                .like(StrUtil.isNotBlank(filename), MediaFiles::getFilename, filename)
+                .eq(StrUtil.isNotBlank(auditStatus), MediaFiles::getAuditStatus, auditStatus);
 
         // 执行分页查询
         page(mediaFilesPage, queryWrapper);
@@ -81,38 +83,51 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     @Override
     public MediaFiles uplodadMediaFile(MultipartFile multipartFile) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         // 检查bucket是否存在
-        BucketExistsArgs bucketExistsArgs = BucketExistsArgs.builder().bucket(bucketName).build();
+        BucketExistsArgs bucketExistsArgs = BucketExistsArgs.builder()
+                .bucket(bucketName)
+                .build();
         boolean bucketExists = minioClient.bucketExists(bucketExistsArgs);
 
         if (!bucketExists) {
             // 如果bucket不存在，创建新的bucket
-            MakeBucketArgs makeBucketArgs = MakeBucketArgs.builder().bucket(bucketName).build();
+            MakeBucketArgs makeBucketArgs = MakeBucketArgs.builder()
+                    .bucket(bucketName)
+                    .build();
             minioClient.makeBucket(makeBucketArgs);
 
             // 设置bucket策略，允许公开访问
-            SetBucketPolicyArgs setBucketPolicyArgs = SetBucketPolicyArgs.builder().bucket(bucketName).config("""
-                    {
-                      "Statement" : [ {
-                        "Action" : "s3:GetObject",
-                        "Effect" : "Allow",
-                        "Principal" : "*",
-                        "Resource" : "arn:aws:s3:::%s/*"
-                      } ],
-                      "Version" : "2012-10-17"
-                    }
-                    """.formatted(bucketName)).build();
+            SetBucketPolicyArgs setBucketPolicyArgs = SetBucketPolicyArgs.builder()
+                    .bucket(bucketName)
+                    .config("""
+                            {
+                              "Statement" : [ {
+                                "Action" : "s3:GetObject",
+                                "Effect" : "Allow",
+                                "Principal" : "*",
+                                "Resource" : "arn:aws:s3:::%s/*"
+                              } ],
+                              "Version" : "2012-10-17"
+                            }
+                            """.formatted(bucketName))
+                    .build();
             minioClient.setBucketPolicy(setBucketPolicyArgs);
         }
 
         // 计算文件的MD5哈希值作为文件ID
         String fileId = DigestUtil.md5Hex(multipartFile.getBytes());
         // 根据当前日期和文件ID生成存储路径
-        String filename = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/" + fileId;
+        String filename = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                + "/" + fileId;
 
         // 解析文件内容类型
         String contentType = parseFileContentType(multipartFile);
         // 准备上传文件到MinIO
-        PutObjectArgs putObjectArgs = PutObjectArgs.builder().bucket(bucketName).contentType(contentType).stream(multipartFile.getInputStream(), multipartFile.getSize(), -1).object(filename).build();
+        PutObjectArgs putObjectArgs = PutObjectArgs.builder()
+                .bucket(bucketName)
+                .contentType(contentType)
+                .stream(multipartFile.getInputStream(), multipartFile.getSize(), -1)
+                .object(filename)
+                .build();
         minioClient.putObject(putObjectArgs);
 
         // 保存文件信息到数据库

@@ -15,6 +15,7 @@ import com.xuecheng.content.model.po.TeachPlanMedia;
 import com.xuecheng.content.service.TeachPlanMediaService;
 import com.xuecheng.content.service.TeachPlanService;
 import jakarta.annotation.Resource;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ import java.util.List;
 @Service
 public class TeachPlanServiceImpl extends ServiceImpl<TeachPlanMapper, TeachPlan> implements TeachPlanService {
     @Resource
+    @Lazy
     private TeachPlanMediaService teachPlanMediaService;
 
     /**
