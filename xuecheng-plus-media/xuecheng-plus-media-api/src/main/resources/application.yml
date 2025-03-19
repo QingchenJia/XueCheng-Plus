@@ -21,6 +21,10 @@ spring:
       pool-name: hikari-xuecheng-plus
       auto-commit: true
       connection-test-query: SELECT 1
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 150MB
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -41,3 +45,8 @@ knife4j:
   enable: true
   setting:
     language: zh_cn
+minio:
+  endpoint: http://192.168.19.130:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket-name: xuecheng-plus
