@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = {"com.xuecheng.system", "com.xuecheng.base.config"})
+@SpringBootApplication(scanBasePackages = {"com.xuecheng.system", "com.xuecheng.base"})
 @Slf4j
 public class SystemApplication {
     public static void main(String[] args) {

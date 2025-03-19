@@ -15,5 +15,7 @@ import java.security.NoSuchAlgorithmException;
 public interface MediaFilesService extends IService<MediaFiles> {
     Page<MediaFiles> listPage(PageParam pageParam, QueryMediaParamDto queryMediaParamDto);
 
-    MediaFiles uplodadMediaFile(MultipartFile multipartFile) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException;
+    MediaFiles uploadMediaFile(MultipartFile multipartFile) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException;
+
+    String getUrl(String mediaId);
 }

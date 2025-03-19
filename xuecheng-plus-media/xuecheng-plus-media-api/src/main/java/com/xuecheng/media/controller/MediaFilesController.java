@@ -34,7 +34,7 @@ public class MediaFilesController {
     @Operation(summary = "上传文件接口")
     @PostMapping("/mediaFile")
     public Result<MediaFiles> uploadMediaFile(@RequestPart MultipartFile multipartFile) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        MediaFiles mediaFiles = mediaFilesService.uplodadMediaFile(multipartFile);
+        MediaFiles mediaFiles = mediaFilesService.uploadMediaFile(multipartFile);
         return Result.success(mediaFiles);
     }
 }

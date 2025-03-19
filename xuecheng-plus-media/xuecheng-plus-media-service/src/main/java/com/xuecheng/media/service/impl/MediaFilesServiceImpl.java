@@ -5,6 +5,7 @@ import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xuecheng.base.exception.CustomException;
 import com.xuecheng.base.model.PageParam;
 import com.xuecheng.media.mapper.MediaFilesMapper;
 import com.xuecheng.media.model.dto.QueryMediaParamDto;
@@ -81,7 +82,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
      * @throws ServerException 如服务器异常、数据不足异常、错误响应异常等
      */
     @Override
-    public MediaFiles uplodadMediaFile(MultipartFile multipartFile) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+    public MediaFiles uploadMediaFile(MultipartFile multipartFile) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         // 检查bucket是否存在
         BucketExistsArgs bucketExistsArgs = BucketExistsArgs.builder()
                 .bucket(bucketName)
@@ -132,6 +133,35 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
 
         // 保存文件信息到数据库
         return saveFileInfo(multipartFile, contentType, filename);
+    }
+
+    /**
+     * 根据媒体资源文件的ID获取其URL
+     *
+     * @param mediaId 媒体资源文件的唯一标识符
+     * @return 媒体资源文件的访问URL
+     * @throws CustomException 如果媒体资源文件不存在或其URL为空时抛出自定义异常
+     */
+    @Override
+    public String getUrl(String mediaId) {
+        // 通过ID获取媒体资源文件对象
+        MediaFiles mediaFiles = getById(mediaId);
+
+        // 检查媒体资源文件是否存在，如果不存在则抛出异常
+        if (mediaFiles == null) {
+            throw new CustomException("该媒体资源文件不存在");
+        }
+
+        // 获取媒体资源文件的URL
+        String url = mediaFiles.getUrl();
+
+        // 检查URL是否为空，如果为空则抛出异常
+        if (StrUtil.isBlank(url)) {
+            throw new CustomException("当前媒体资源文件处理为完毕");
+        }
+
+        // 返回媒体资源文件的URL
+        return url;
     }
 
     /**
